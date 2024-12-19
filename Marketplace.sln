@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marketplace.Api", "src\Marketplace.Api\Marketplace.Api.csproj", "{882D423C-A6D6-42C3-9A92-64D64268A725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marketplace.Domain", "src\Marketplace.Domain\Marketplace.Domain.csproj", "{35B26094-A721-4AD9-8720-BD6722A82FD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marketplace.Domain.Tests", "tests\Marketplace.Domain.Tests\Marketplace.Domain.Tests.csproj", "{7E99E200-EE94-4563-8402-10CD943C11C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marketplace.Framework", "src\Marketplace.Framework\Marketplace.Framework.csproj", "{D4B3EDDD-480F-4696-A250-DA10861E5AB9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{882D423C-A6D6-42C3-9A92-64D64268A725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{882D423C-A6D6-42C3-9A92-64D64268A725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{882D423C-A6D6-42C3-9A92-64D64268A725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{882D423C-A6D6-42C3-9A92-64D64268A725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B26094-A721-4AD9-8720-BD6722A82FD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35B26094-A721-4AD9-8720-BD6722A82FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35B26094-A721-4AD9-8720-BD6722A82FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35B26094-A721-4AD9-8720-BD6722A82FD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E99E200-EE94-4563-8402-10CD943C11C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E99E200-EE94-4563-8402-10CD943C11C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E99E200-EE94-4563-8402-10CD943C11C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E99E200-EE94-4563-8402-10CD943C11C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4B3EDDD-480F-4696-A250-DA10861E5AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4B3EDDD-480F-4696-A250-DA10861E5AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4B3EDDD-480F-4696-A250-DA10861E5AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4B3EDDD-480F-4696-A250-DA10861E5AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
