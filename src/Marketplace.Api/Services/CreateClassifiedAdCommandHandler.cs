@@ -1,4 +1,6 @@
 using Marketplace.Api.Contracts;
+using Marketplace.Domain.ClassifiedAds;
+using Marketplace.Domain.ClassifiedAds.ValueObjects;
 
 namespace Marketplace.Api.Services;
 
@@ -11,9 +13,10 @@ public class CreateClassifiedAdCommandHandler : IHandleCommand<ClassifiedAds.V1.
         _entityStore = entityStore;
     }
 
-    public Task Handle(ClassifiedAds.V1.Create command)
+    public async Task Handle(ClassifiedAds.V1.Create command)
     {
-        throw new NotImplementedException();
+        var ad = ClassifiedAd.CreateNew(UserId.FromGuid(command.OwnerId));
+        await _entityStore.Save(ad);
     }
 }
 
@@ -26,17 +29,36 @@ public class SetClassifiedAdTitleCommandHandler : IHandleCommand<ClassifiedAds.V
         _entityStore = entityStore;
     }
 
-    public Task Handle(ClassifiedAds.V1.SetTitle command)
+    public async Task Handle(ClassifiedAds.V1.SetTitle command)
     {
-        throw new NotImplementedException();
+        var ad = await _entityStore.Load<ClassifiedAd>(command.Id.ToString());
+        if (ad == null)
+        {
+            throw new InvalidOperationException($"Classified ad with id {command.Id} does not exist");
+        }
+        ad.SetTitle(ClassifiedAdTitle.FromString(command.Title));
+        await _entityStore.Save(ad);
     }
 }
 
 public class UpdateClassifiedAdTextCommandHandler : IHandleCommand<ClassifiedAds.V1.UpdateText>
-{
-    public Task Handle(ClassifiedAds.V1.UpdateText command)
+{ 
+    private readonly IEntityStore _entityStore;
+
+    public UpdateClassifiedAdTextCommandHandler(IEntityStore entityStore)
     {
-        throw new NotImplementedException();
+        _entityStore = entityStore;
+    }
+
+    public async Task Handle(ClassifiedAds.V1.UpdateText command)
+    {
+        var ad = await _entityStore.Load<ClassifiedAd>(command.Id.ToString());
+        if (ad == null)
+        {
+            throw new InvalidOperationException($"Classified ad with id {command.Id} does not exist");
+        }
+        ad.UpdateText(ClassifiedAdText.FromString(command.Text));
+        await _entityStore.Save(ad);
     }
 }
 

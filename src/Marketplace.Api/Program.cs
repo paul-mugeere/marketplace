@@ -1,5 +1,6 @@
 using Marketplace.Api.Contracts;
 using Marketplace.Api.Services;
+using Marketplace.Domain.ClassifiedAds.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,8 @@ builder.Services.AddSwaggerGen(c=>c.SwaggerDoc("v1",new OpenApiInfo()
 
 builder.Services.AddScoped<IEntityStore, RavenDbEntityStore>();
 builder.Services.AddScoped<IHandleCommand<ClassifiedAds.V1.Create>,CreateClassifiedAdCommandHandler>();
-builder.Services.AddScoped<IHandleCommand<object>,ClassifiedAdsApplicationService>();
+builder.Services.AddScoped<ICurrencyLookup,CurrencyLookup>();
+builder.Services.AddScoped<IClassifiedAdsApplicationService,ClassifiedAdsApplicationService>();
 
 var app = builder.Build();
 

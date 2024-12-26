@@ -15,7 +15,11 @@ public class ClassifiedAdsCommandsController: ControllerBase
     private readonly IHandleCommand<ClassifiedAds.V1.UpdateText> _updateTextCommandHandler;
     private readonly IHandleCommand<ClassifiedAds.V1.UpdatePrice> _updatePriceCommandHandler;
 
-    public ClassifiedAdsCommandsController(IHandleCommand<ClassifiedAds.V1.Create> commandHandler, IHandleCommand<ClassifiedAds.V1.SetTitle> setTitleCommandHandler, IHandleCommand<ClassifiedAds.V1.UpdateText> updateTextCommandHandler, IHandleCommand<ClassifiedAds.V1.UpdatePrice> updatePriceCommandHandler)
+    public ClassifiedAdsCommandsController(
+        IHandleCommand<ClassifiedAds.V1.Create> commandHandler, 
+        IHandleCommand<ClassifiedAds.V1.SetTitle> setTitleCommandHandler, 
+        IHandleCommand<ClassifiedAds.V1.UpdateText> updateTextCommandHandler, 
+        IHandleCommand<ClassifiedAds.V1.UpdatePrice> updatePriceCommandHandler)
     {
         _commandHandler = commandHandler;
         _setTitleCommandHandler = setTitleCommandHandler;
