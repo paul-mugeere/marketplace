@@ -4,9 +4,8 @@ using Marketplace.Domain.ClassifiedAds.ValueObjects;
 
 namespace Marketplace.Domain.ClassifiedAds;
 
-public class ClassifiedAd : Entity
+public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
 {
-    public ClassifiedAdId Id { get; private set; }
     public UserId OwnerId { get; private set; }
     public ClassifiedAdTitle Title { get; private set; }
     public ClassifiedAdText Text { get; private set; }
