@@ -1,5 +1,6 @@
 using Marketplace.Domain.ClassifiedAds.Events;
 using Marketplace.Domain.ClassifiedAds.Exceptions;
+using Marketplace.Domain.ClassifiedAds.Extensions;
 using Marketplace.Domain.ClassifiedAds.ValueObjects;
 
 namespace Marketplace.Domain.ClassifiedAds;
@@ -25,9 +26,10 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
 
     public void RequestToPublish() => Apply(new ClassifiedAdSentForReview(Id));
     
-    public void AddPicture(Uri pictureUri, PictureSize size) => Apply(new PictureAddedToClassifiedAd(Id, PictureId.CreateNew(), pictureUri, size));
-
-
+    public void AddPicture(Uri pictureUri, PictureSize size) => Apply(new PictureAddedToClassifiedAd(Id, PictureId.CreateNew(), pictureUri, size,Pictures.Max(x=>x.Order) + 1));
+    
+    public void ResizePicture(PictureId pictureId, PictureSize size) => Apply(new ClassifiedAdPictureResized(Id, pictureId, size));
+    
     public static ClassifiedAd CreateNew(UserId ownerId) => new(ClassifiedAdId.CreateNew(),ownerId,ClassifiedAdState.Inactive);
     public static ClassifiedAd CreateNew(UserId ownerId,ClassifiedAdState state) => new(ClassifiedAdId.CreateNew(),ownerId,state);
     
@@ -38,23 +40,30 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
         UserId ownerId,
         ClassifiedAdState state) => Apply(new ClassifiedAdCreated(id, ownerId, state));
     
+    private Picture? FindPicture(PictureId pictureId) => Pictures.FirstOrDefault(x => x.Id == pictureId);
+    private Picture? FirstPicture => Pictures.OrderBy(x=>x.Order).FirstOrDefault();
+    
     protected override void EnsureValidState()
     {
-        var isValidState = Id?.Value != default && OwnerId?.Value != default && (State switch
+        var isValidState = Id?.Value != null && OwnerId?.Value != null && (State switch
         {
             ClassifiedAdState.PendingReview => 
                 !string.IsNullOrWhiteSpace(Title?.Value) 
-                && !string.IsNullOrWhiteSpace(Text?.Value) && Price?.Amount > 0,
+                && !string.IsNullOrWhiteSpace(Text?.Value) 
+                && Price?.Amount > 0
+                && FirstPicture.HasCorrectSize(),
             ClassifiedAdState.Active => 
                 !string.IsNullOrWhiteSpace(Title?.Value)
-                && !string.IsNullOrWhiteSpace(Text?.Value) && Price?.Amount > 0
-                && ApprovedBy?.Value != default,
+                && !string.IsNullOrWhiteSpace(Text?.Value) 
+                && Price?.Amount > 0
+                && ApprovedBy?.Value != null
+                && FirstPicture.HasCorrectSize(),
             _ => true
         });
 
         if(isValidState is not true)
         {
-            throw new InvalidEntityStateException(this, "Title cannot be empty.");
+            throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}.");
         }
     }
 
@@ -76,12 +85,17 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
             case ClassifiedAdPriceUpdated priceUpdatedEvent:
                 Price = priceUpdatedEvent.Price;
                 break;
-            case ClassifiedAdSentForReview sentForReviewEvent:
+            case ClassifiedAdSentForReview:
                 State = ClassifiedAdState.PendingReview;
                 break;
             case PictureAddedToClassifiedAd pictureAddedEvent:
-                var picture = Picture.CreateNew(pictureAddedEvent.Url,pictureAddedEvent.Size, Pictures.Max(x=>x.Order) + 1);
+                var picture = Picture.CreateNew(pictureAddedEvent.Url, pictureAddedEvent.Size, pictureAddedEvent.Order);
                 Pictures.Add(picture);
+                break;
+            case ClassifiedAdPictureResized resizedEvent:
+                var pictureToResize = FindPicture(resizedEvent.PictureId);
+                if (pictureToResize is null) throw new InvalidOperationException("Cannot resize a picture that doesn't exist.");
+                pictureToResize.Resize(resizedEvent.Size);
                 break;
         }
     }
