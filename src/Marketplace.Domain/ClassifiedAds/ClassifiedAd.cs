@@ -15,6 +15,8 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
     
     public UserId ApprovedBy { get; private set; }
 
+    public List<Picture> Pictures { get; private set; } = [];
+
     public void SetTitle(ClassifiedAdTitle title) => Apply(new ClassifiedAdTitleChanged(Id, Title));
 
     public void UpdateText(ClassifiedAdText text)=> Apply(new ClassifiedAdTextChanged(Id, text));
@@ -22,6 +24,8 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
     public void UpdatePrice(Price price) => Apply(new ClassifiedAdPriceUpdated(Id, price));
 
     public void RequestToPublish() => Apply(new ClassifiedAdSentForReview(Id));
+    
+    public void AddPicture(Uri pictureUri, PictureSize size) => Apply(new PictureAddedToClassifiedAd(Id, PictureId.CreateNew(), pictureUri, size));
 
 
     public static ClassifiedAd CreateNew(UserId ownerId) => new(ClassifiedAdId.CreateNew(),ownerId,ClassifiedAdState.Inactive);
@@ -74,6 +78,10 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
                 break;
             case ClassifiedAdSentForReview sentForReviewEvent:
                 State = ClassifiedAdState.PendingReview;
+                break;
+            case PictureAddedToClassifiedAd pictureAddedEvent:
+                var picture = Picture.CreateNew(pictureAddedEvent.Url,pictureAddedEvent.Size, Pictures.Max(x=>x.Order) + 1);
+                Pictures.Add(picture);
                 break;
         }
     }
